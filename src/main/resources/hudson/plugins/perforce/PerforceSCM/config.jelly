@@ -129,6 +129,10 @@
     <f:entry title="Always Force Sync" help="/plugin/perforce/help/alwaysForceSync.html">
       <f:checkbox field="alwaysForceSync" value="True" id="alwaysForceSync" />
     </f:entry>
+
+    <f:entry title="Reload" help="/plugin/perforce/help/Reload.html">
+      <f:checkbox field="reload" value="True" id="reload" />
+    </f:entry>
   
     <f:entry title="Disable Changelog" help="/plugin/perforce/help/disableChangeLogOnly.html">
       <f:checkbox field="disableChangeLogOnly" value="False"/>

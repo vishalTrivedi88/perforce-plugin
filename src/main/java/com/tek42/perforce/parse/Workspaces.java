@@ -188,5 +188,24 @@ public class Workspaces extends AbstractPerforceTemplate {
         StringBuilder result = getPerforceResponse(new String[] { getP4Exe(), "sync", "-n" });
         return result;
     }
+    
+    /**
+	 * Reloads a workspace
+	 * 
+	 * @return
+	 * 	A StringBuilder that contains the output of the p4 execution.
+	 * @throws PerforceException
+	 */
+	public StringBuilder reload(String ws_name) throws PerforceException{
+		//Error handling and output filtering
+        final StringBuilder errors = new StringBuilder();
+        
+        String[] cmdLine={getP4Exe(),"reload","-c",ws_name}; 
+	StringBuilder response = getPerforceResponse(cmdLine);
+        if(errors.length()>0){
+        	throw new PerforceException("Errors encountered while reloading : " + response);
+        }
+        return response;
+	}
 
 }

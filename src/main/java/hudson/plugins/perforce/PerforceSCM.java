@@ -132,6 +132,10 @@ public class PerforceSCM extends SCM {
      */
     boolean alwaysForceSync = false;
     /**
+     * Allow reloading older workspace that have been unloaded
+     */
+    boolean reload = false;
+    /**
      * Don't update the 'have' database on the server when syncing.
      */
     boolean dontUpdateServer = false;
@@ -311,6 +315,7 @@ public class PerforceSCM extends SCM {
             boolean forceSync,
             boolean dontUpdateServer,
             boolean alwaysForceSync,
+            boolean reload,
             boolean createWorkspace,
             boolean updateView,
             boolean disableChangeLogOnly,
@@ -406,6 +411,7 @@ public class PerforceSCM extends SCM {
         this.forceSync = forceSync;
         this.dontUpdateServer = dontUpdateServer;
         this.alwaysForceSync = alwaysForceSync;
+        this.reload = reload;
         this.disableChangeLogOnly = disableChangeLogOnly;
         this.disableSyncOnly = disableSyncOnly;
         this.showIntegChanges = showIntegChanges;
@@ -876,6 +882,8 @@ public class PerforceSCM extends SCM {
         // Pull from optional named parameters
         boolean wipeBeforeBuild = overrideWithBooleanParameter(
                 "P4CLEANWORKSPACE", build, this.wipeBeforeBuild);
+        boolean reload = overrideWithBooleanParameter(
+                "RELOAD", build, this.reload);
         boolean quickCleanBeforeBuild = overrideWithBooleanParameter(
                 "P4QUICKCLEANWORKSPACE", build, this.quickCleanBeforeBuild);
         boolean wipeRepoBeforeBuild = overrideWithBooleanParameter(
@@ -906,6 +914,12 @@ public class PerforceSCM extends SCM {
 
             Workspace p4workspace = getPerforceWorkspace(build.getProject(), effectiveProjectPath, depot, build.getBuiltOn(), build, launcher, workspace, listener, false);
 
+            if(reload){
+                log.println("Reloading : "+p4workspace.getName());
+                String temp = new Workspaces(depot).reload(p4workspace.getName()).toString();
+                log.println(temp);    
+            }
+            
             boolean dirtyWorkspace = p4workspace.isDirty();
             saveWorkspaceIfDirty(depot, p4workspace, log);
 
@@ -2923,6 +2937,13 @@ public class PerforceSCM extends SCM {
     public boolean isAlwaysForceSync() {
         return alwaysForceSync;
     }
+    
+    /**
+     * @return  True if we are want to re-load unloaded workspace
+     */
+    public boolean isReload(){
+        return reload;
+    }
 
     /**
      * @return True if auto sync is disabled
@@ -2950,6 +2971,10 @@ public class PerforceSCM extends SCM {
      */
     public void setAlwaysForceSync(boolean force) {
         this.alwaysForceSync = force;
+    }
+    
+    public void setReload(boolean reload) {
+        this.reload = reload;
     }
 
     /**
